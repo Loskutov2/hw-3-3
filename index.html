@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    img {
+      height: 200px;
+      background-color: #f0f0f0;
+      display: block;
+      margin-top: 300px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Лінійне завантаження зображень</h1>
+  
+  <img src="./imgs/Group 1.png" data-src="./imgs/random-img1.jpg" alt="Зображення 1">
+  <img src="./imgs/Group 1.png" data-src="./imgs/random-img2.jpg" alt="Зображення 2">
+  <img src="./imgs/Group 1.png" data-src="./imgs/random-img3.jpg" alt="Зображення 3">
+  <img src="./imgs/Group 1.png" data-src="./imgs/random-img4.jpg" alt="Зображення 4">
+
+  <script src="intersection-observer.js"></script>
+  <script>
+    // Отримуємо всі теги <img> з data-src атрибутом
+    const images = document.querySelectorAll('img[data-src]');
+
+    // Функція для завантаження зображення
+    const loadImage = (image) => {
+      // Створюємо новий об'єкт Image
+      const img = new Image();
+      img.src = image.dataset.src;
+
+      // Викликаємо функцію, коли зображення завантажено
+      img.onload = () => {
+        // Змінюємо src атрибут на завантажене зображення
+        image.src = img.src;
+
+        // Видаляємо data-src атрибут
+        image.removeAttribute('data-src');
+      };
+    };
+
+    // Створюємо новий екземпляр IntersectionObserver
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        // Якщо зображення стає видимим
+        if (entry.isIntersecting) {
+          // Завантажуємо зображення
+          loadImage(entry.target);
+
+          // Припиняємо спостереження за зображенням
+          observer.unobserve(entry.target);
+        }
+      });
+    });
+
+    // Додаємо спостерігача до кожного зображення
+    images.forEach((image) => {
+      observer.observe(image);
+    });
+  </script>
+</body>
+</html>
